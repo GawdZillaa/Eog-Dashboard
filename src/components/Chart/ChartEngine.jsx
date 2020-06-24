@@ -19,12 +19,7 @@ const ChartEngine = ({}) => {
     console.log(pages)
     return(
         <div
-            style={{
-                display: 'flex',
-                flex: '1',
-                flexDirection: 'column',
-                backgroundColorL: 'blue'
-            }}
+
         >
             {
                 pages.map((page, pageId) => {

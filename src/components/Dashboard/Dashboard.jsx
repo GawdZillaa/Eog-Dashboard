@@ -71,11 +71,64 @@ class Dashboard extends React.Component {
                 style={{
                     height: '100vh',
                     width : '100%',
-                    backgroundColor : 'red'
+                    backgroundColor : 'red',
+                    display:'flex',
+                    flexDirection:'column'
                 }}
             >
+                <div
+                style={{
+                    display:'flex',
+                    flexDirection: 'row',
+                    height:'15vh',
+                    width: '100%',
+                    backgroundColor: 'white'
+                }}
+                ></div>
 
-               <ChartEngine></ChartEngine>
+                <div
+                    style={{
+                        display:'flex',
+                        flexDirection: 'row',
+                        height:'85vh',
+                        width: '100%'
+                    }}
+                >
+                    <div
+                        style={{
+                            display:'flex',
+                            height:'100%',
+                            width: '15%',
+                            backgroundColor: 'pink'
+                        }}
+                    >
+
+                    </div>
+
+                    <div
+                        style={{
+                            display: 'flex',
+                            width:'85%',
+                            height:'100%',
+                            overflow:'scroll'
+                        }}
+                    >
+
+                        <div
+                            style={{
+                                height:'100%',
+                                width: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                backgroundColorL: 'blue',
+                            }}
+                        >
+                            <ChartEngine></ChartEngine>
+                        </div>
+
+                    </div>
+                </div>
+
 
             </div>
         )
