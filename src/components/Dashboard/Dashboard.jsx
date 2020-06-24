@@ -22,11 +22,22 @@ const queryObject = new ApolloClient ({
 
 
 class Dashboard extends React.Component {
+    // "flareTemp"
+    // 1: "injValveOpen"
+    // 2: "waterTemp"
+    // 3: "casingPressure"
+    // 4: "tubingPressure"
+    // 5: "oilTemp"
 
     constructor(){
         super();
         this.state = {
-            chartsEnabled: 3
+            chartsEnabled: 2,
+            chartSpecifications: ['',''],
+            chartSchema: [
+                {selectedMetrics:['flareTemp', 'injValveOpen']},
+                {selectedMetrics:['tubingPressure', 'casingPressure']}
+            ]
         }
     }
 
@@ -51,7 +62,12 @@ class Dashboard extends React.Component {
                 newMetricsResponse.data.getMetrics ? 
                 {newMetrics : newMetricsResponse.data.getMetrics} : { hasError : true };
             this.props.setMetricList(normalizedNewMetrics);
+            console.log("AYEEEE", this.props.metricList)
         })
+    }
+
+    assignChartDetails = (chartIndex, metricIndex, metric) => {
+
     }
 
 
@@ -124,7 +140,9 @@ class Dashboard extends React.Component {
                             }}
                         >
                             <ChartEngine
-                                chartsToDisplay={this.state.chartsEnabled} 
+                                chartsToDisplay={this.state.chartsEnabled}
+                                assignChartDetails={this.assignChartDetails}
+                                chartSchema={this.state.chartSchema}
                             />
                         </div>
 

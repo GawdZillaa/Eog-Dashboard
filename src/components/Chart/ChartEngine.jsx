@@ -1,5 +1,6 @@
 import React from 'react';
 import Chart from '../Chart/Chart'
+import MetricSelector from './MetricSelector'
 
 const MAX_SIZE = 4
 const MAX_ROW = 2
@@ -8,10 +9,10 @@ const charCount = 8
 const colors = ['pink', 'red', 'green', 'yellow']
 const colorsR = ['white', 'purple']
 const colorsC = ['violet', 'brown']
-const ChartEngine = ({chartsToDisplay, }) => {
+const ChartEngine = ({chartsToDisplay, assignChartDetails, chartSchema}) => {
     //Each Page can hold 4 charts
     let pageCount = chartsToDisplay ?  Math.ceil(chartsToDisplay / MAX_PERPAGE) : 0;
-    console.log("Page Count", pageCount)
+    console.log("chartSchema", chartSchema)
     return(
         <div
 
@@ -52,7 +53,32 @@ const ChartEngine = ({chartsToDisplay, }) => {
                                                         >
                                                             {
                                                                 chartsToDisplay -1 >= (pageId*4 + ((rowId*2) + chartId)) ? 
-                                                                <Chart></Chart> : null
+                                                                <div
+                                                                    style={{
+                                                                        display:'flex',
+                                                                        flexDirection:'column',
+                                                                        height:'100%',
+                                                                        width: '100%'
+                                                                    }}
+                                                                >
+                                                                    <div
+                                                                        style={{
+                                                                            flex:'1.5'
+                                                                        }}
+                                                                    >
+                                                                        <MetricSelector
+                                                                            chartSchema={chartSchema[(pageId*4 + ((rowId*2) + chartId))]}
+                                                                        ></MetricSelector>
+                                                                    </div>
+                                                                    <div
+                                                                        style={{
+                                                                            flex:'8.5'
+                                                                        }}
+                                                                    >
+                                                                        <Chart></Chart> 
+                                                                    </div>
+                                                                </div>
+                                                                : null
 
                                                             }
                                                         </div>
