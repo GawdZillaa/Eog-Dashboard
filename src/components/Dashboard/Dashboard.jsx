@@ -1,14 +1,15 @@
 import React from 'react';
 import { useQuery } from 'urql';
 import { createHttpLink } from 'apollo-link-http';
-import { ApolloClient } from 'apollo-boost';
+import { ApolloClient, from } from 'apollo-boost';
 import gql from 'graphql-tag';
 import { InMemoryCache } from 'apollo-boost';
 import { useDispatch, useSelector } from 'react-redux';
-import { actions } from '../Features/Chart/chart.reducer';
-import { IState } from '../store';
+import { actions } from '../../Features/Chart/chart.reducer';
+import { IState } from '../../store';
 import { connect } from 'react-redux';
-import { setMetricList, apiLoading } from '../Features/Chart/chart.reducer'
+import { setMetricList, apiLoading } from '../../Features/Chart/chart.reducer'
+import  ChartEngine  from '../Chart/ChartEngine'
 
 const httpLink = createHttpLink({
     uri: 'https://react.eogresources.com/graphql'
@@ -36,11 +37,6 @@ class Dashboard extends React.Component {
     }
 
     getMetrics = () => {
-        // const dispatch = useDispatch();
-
-        // dispatch(actions.apiLoading());
-
-        console.log(this.props)
         this.props.apiLoading();
         queryObject.query({
             query: gql`
@@ -49,16 +45,12 @@ class Dashboard extends React.Component {
             }
             `
         }).then(newMetricsResponse => {
-            console.log(newMetricsResponse)
             let normalizedNewMetrics = 
-            newMetricsResponse && 
-            newMetricsResponse.data &&
-            newMetricsResponse.getMetrics ? 
-            {newMetrics : newMetricsResponse.getMetrics} : { hasError : true };
-            
-            console.log("NICE", normalizedNewMetrics)
+                newMetricsResponse && 
+                newMetricsResponse.data &&
+                newMetricsResponse.data.getMetrics ? 
+                {newMetrics : newMetricsResponse.data.getMetrics} : { hasError : true };
             this.props.setMetricList(normalizedNewMetrics);
-
         })
     }
 
@@ -82,7 +74,9 @@ class Dashboard extends React.Component {
                     backgroundColor : 'red'
                 }}
             >
-               <h1> { this.props.isLoading.toString() } </h1>
+
+               <ChartEngine></ChartEngine>
+
             </div>
         )
     }
