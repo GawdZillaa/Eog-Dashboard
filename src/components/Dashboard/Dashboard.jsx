@@ -26,7 +26,7 @@ class Dashboard extends React.Component {
     constructor(){
         super();
         this.state = {
-
+            chartsEnabled: 3
         }
     }
 
@@ -123,7 +123,9 @@ class Dashboard extends React.Component {
                                 backgroundColorL: 'blue',
                             }}
                         >
-                            <ChartEngine></ChartEngine>
+                            <ChartEngine
+                                chartsToDisplay={this.state.chartsEnabled} 
+                            />
                         </div>
 
                     </div>
