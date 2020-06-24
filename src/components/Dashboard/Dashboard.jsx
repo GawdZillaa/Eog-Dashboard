@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../../Features/Chart/chart.reducer';
 import { IState } from '../../store';
 import { connect } from 'react-redux';
-import { setMetricList, apiLoading } from '../../Features/Chart/chart.reducer'
+import { setMetricList, apiLoading, newChartSelection } from '../../Features/Chart/chart.reducer'
 import  ChartEngine  from '../Chart/ChartEngine'
 
 const httpLink = createHttpLink({
@@ -32,11 +32,10 @@ class Dashboard extends React.Component {
     constructor(){
         super();
         this.state = {
-            chartsEnabled: 2,
+            chartsEnabled: 1,
             chartSpecifications: ['',''],
             chartSchema: [
-                {selectedMetrics:['flareTemp', 'injValveOpen']},
-                {selectedMetrics:['tubingPressure', 'casingPressure']}
+                {selectedMetrics:[]}
             ]
         }
     }
@@ -66,20 +65,46 @@ class Dashboard extends React.Component {
         })
     }
 
-    assignChartDetails = (chartIndex, metricIndex, metric) => {
+    assignChartMetrics = async(changeRequest) => {
+        console.log(changeRequest)
+        let { action, chartIndex, newMetric, metricIndex } = changeRequest;
+        // console.log(moment().toDate())
+        // console.log(moment().subtract(30, 'minutes').toDate())
+        // console.log(moment().valueOf(), moment().subtract(30, 'minutes').valueOf())
+        let oldSelectedMap = this.props.selectedMetricsMap;
+        let oldChartSelectedList = this.props.selectedMetricsMap[chartIndex] ?
+            this.props.selectedMetricsMap[chartIndex] : [];
 
+        let updatedChartSelectionList = [];
+        let updatesSelectedMap = [];
+            if(action === 'add'){
+            switch(action){
+                case 'add':{
+                    updatedChartSelectionList = [...oldChartSelectedList, newMetric]
+                    break;
+                }
+                case 'remove':{
+                    updatedChartSelectionList = oldChartSelectedList.splice(metricIndex, 1)
+                    break;
+                }
+                default:{
+                    return
+                }
+            }
+
+            updatesSelectedMap = {...oldSelectedMap}
+            updatesSelectedMap[chartIndex] = updatedChartSelectionList;
+       }
+
+        console.log("Setting...", updatesSelectedMap)
+
+        await this.props.newChartSelection({
+            newSelectedMetricsMap : updatesSelectedMap,
+        });
+        console.log(this.props.selectedMetricsMap)
     }
 
 
-    getWeather = (IState) => {
-        const { state } = IState
-        const { temperatureinFahrenheit, description, locationName } = state.weather;
-        return {
-            temperatureinFahrenheit,
-            description,
-            locationName,
-        }
-    };
 
     render() {
         return (
@@ -141,7 +166,7 @@ class Dashboard extends React.Component {
                         >
                             <ChartEngine
                                 chartsToDisplay={this.state.chartsEnabled}
-                                assignChartDetails={this.assignChartDetails}
+                                assignChartMetrics={this.assignChartMetrics}
                                 chartSchema={this.state.chartSchema}
                             />
                         </div>
@@ -159,12 +184,14 @@ class Dashboard extends React.Component {
 const mapStateToProps = state => ({
     hasError: state.chart.hasError,
     metricList: state.chart.metricList,
-    isLoading: state.chart.isLoading
+    isLoading: state.chart.isLoading,
+    selectedMetricsMap : state.chart.selectedMetricsMap
 })
 
 const mapDispatchToProps = dispatch => ({
     setMetricList: e => dispatch(setMetricList(e)),
-    apiLoading: e => dispatch(apiLoading(e))
+    apiLoading: e => dispatch(apiLoading(e)),
+    newChartSelection: e => dispatch(newChartSelection(e))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

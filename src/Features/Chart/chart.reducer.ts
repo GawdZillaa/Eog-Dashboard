@@ -9,11 +9,16 @@ export type ApiLoadAction = {
 export type MetricItems = {
   newMetrics: []
 };
+export type ChartSelection = {
+  newSelectedMetricsMap: []
+}
 
 const initialState = {
   metricList: [],
   isLoading: false,
-  hasError: false
+  hasError: false,
+  chartMap: [],
+  selectedMetricsMap: {}
 };
 
 const slice = createSlice({
@@ -28,7 +33,11 @@ const slice = createSlice({
     apiLoading: (state)=>{
       state.isLoading = true;
     },
-    chartApiErrorReceived: (state, action: PayloadAction<ApiErrorAction>) => state
+    chartApiErrorReceived: (state, action: PayloadAction<ApiErrorAction>) => state,
+    newChartSelection: (state, action: PayloadAction<ChartSelection>) =>{
+      let { newSelectedMetricsMap } = action.payload;
+      state.selectedMetricsMap = newSelectedMetricsMap;
+    }
 
   },
 });
@@ -37,3 +46,4 @@ export const reducer = slice.reducer;
 export const actions = slice.actions;
 export const setMetricList = slice.actions['setMetricList']
 export const apiLoading = slice.actions['apiLoading']
+export const newChartSelection = slice.actions['newChartSelection']

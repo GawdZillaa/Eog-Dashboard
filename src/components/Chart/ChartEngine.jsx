@@ -3,7 +3,8 @@ import Chart from '../Chart/Chart'
 import MetricSelector from './MetricSelector'
 import { useSubscription } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-
+import * as moment from 'moment/moment';
+import { connect } from 'react-redux';
 const MAX_SIZE = 4
 const MAX_ROW = 2
 const MAX_PERPAGE = 4
@@ -22,27 +23,35 @@ const GQL_OBJ = gql`
           }
     }
 `;
+let DATA_CACHE = {};
 
-const ChartEngine = ({chartsToDisplay, assignChartDetails, chartSchema}) => {
+const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selectedMetricsMap}) => {
     const { data, error, loading } = useSubscription(GQL_OBJ, {});
-    
-    // CLIENT_OBJ.query({
-    //     query: gql`
-    //     {
-    //         users {
-    //         id
-    //         name
-    //         email
-    //         }
-    //     }
-    //     `
-    // }).then(res => {
+    // console.log(data);
 
-    // })
+    // console.log(moment().toDate())
+    // console.log(moment().subtract(30, 'minutes').toDate())
+    // console.log(moment().valueOf(), moment().subtract(30, 'minutes').valueOf())
+    for(let _chartIndex in selectedMetricsMap){
+        console.log(selectedMetricsMap[_chartIndex])
+        let metricInFocus = selectedMetricsMap[_chartIndex]
+        if(!DATA_CACHE[metricInFocus]){
+            console.log("No Data!")
+            if(!DATA_CACHE[0]){
+                console.log("No Refrence!")
+                //First Piece Of Data
+                //Query Using Moment Times
+                let date_future
+                let data_past
+            }else{
+                //Already Have Data, Use Time From Arrays
+            }
+        }
+    }
     
             
     let pageCount = chartsToDisplay ?  Math.ceil(chartsToDisplay / MAX_PERPAGE) : 0;
-    console.log("chartSchema", chartSchema)
+    // console.log("chartSchema", chartSchema)
     return(
         <div
 
@@ -58,6 +67,7 @@ const ChartEngine = ({chartsToDisplay, assignChartDetails, chartSchema}) => {
                                 flexDirection: 'column',
                                 display:'flex'
                             }}
+                            key={pageId}
                         >
                             {
                                 [...Array(MAX_ROW).keys()].map((row, rowId) => {
@@ -69,6 +79,7 @@ const ChartEngine = ({chartsToDisplay, assignChartDetails, chartSchema}) => {
                                                 flex:'1',
                                                 backgroundColor: colorsR[rowId]
                                             }}
+                                            key={rowId}
                                         >
                                             {
                                                 [...Array(MAX_ROW).keys()].map((chart, chartId, ) =>{
@@ -80,6 +91,7 @@ const ChartEngine = ({chartsToDisplay, assignChartDetails, chartSchema}) => {
                                                                 flex: 1,
                                                                 // backgroundColor: `#${Math.floor(Math.random()*16777215).toString(16)}`
                                                             }}
+                                                            key={chartId}
                                                         >
                                                             {
                                                                 chartsToDisplay -1 >= (pageId*4 + ((rowId*2) + chartId)) ? 
@@ -98,7 +110,10 @@ const ChartEngine = ({chartsToDisplay, assignChartDetails, chartSchema}) => {
                                                                     >
                                                                         <MetricSelector
                                                                             chartSchema={chartSchema[(pageId*4 + ((rowId*2) + chartId))]}
-                                                                        ></MetricSelector>
+                                                                            assignChartMetrics={assignChartMetrics}
+                                                                            chartIndex={(pageId*4 + ((rowId*2) + chartId))}
+                                                                        />
+
                                                                     </div>
                                                                     <div
                                                                         style={{
@@ -133,4 +148,12 @@ const ChartEngine = ({chartsToDisplay, assignChartDetails, chartSchema}) => {
     )
 }
 
-export default ChartEngine;
+const mapStateToProps = state => ({
+    hasError: state.chart.hasError,
+    metricList: state.chart.metricList,
+    isLoading: state.chart.isLoading,
+    selectedMetricsMap : state.chart.selectedMetricsMap
+})
+const mapDispatchToProps = dispatch => ({})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChartEngine);

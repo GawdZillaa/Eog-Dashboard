@@ -6,12 +6,14 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { actions } from '../../Features/Chart/chart.reducer';
 
 
 const getSpacer = (flexAmount) => {
     return <Box flex= {flexAmount} />
 }
-const MetricSelector = ({metricList, chartSchema}) => {
+const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics, selectedMetricsMap}) => {
 
     
         return (
@@ -56,9 +58,16 @@ const MetricSelector = ({metricList, chartSchema}) => {
                             labelId="Select Metric"
                             id="Select Metric"
                             value={'Metric'}
-                            onChange={''}
+                            onChange={(event) => assignChartMetrics({
+                                chartIndex : chartIndex,
+                                newMetric : event.target.value,
+                                action : 'add'
+                            })}
                             fullWidth={true}
-                            disabled={chartSchema.selectedMetrics.length === 2}
+                            disabled={
+                                selectedMetricsMap[chartIndex] && 
+                                selectedMetricsMap[chartIndex].length === 2
+                            }
                         >
                             <MenuItem value="">
                             <em>None</em>
@@ -68,8 +77,9 @@ const MetricSelector = ({metricList, chartSchema}) => {
                                 metricList.map((metricName, id) =>{
                                 
                                 {
-                                    return !chartSchema.selectedMetrics.includes(metricName) ?
-                                    <MenuItem key={id} value={metricName}>{ metricName }</MenuItem> : null
+                                    return !selectedMetricsMap[chartIndex] ||
+                                        !selectedMetricsMap[chartIndex].includes(metricName) ?
+                                    <MenuItem key={id} name={id} value={metricName}>{ metricName }</MenuItem> : null 
                                 }
                                 
                                 })
@@ -102,8 +112,8 @@ const MetricSelector = ({metricList, chartSchema}) => {
                         display='flex'
                     >
                     {
-                        chartSchema.selectedMetrics &&
-                        chartSchema.selectedMetrics.map((metricString, index) =>{
+                        selectedMetricsMap[chartIndex] &&
+                        selectedMetricsMap[chartIndex].map((metricString, index) =>{
                         return (
                             <Box
                                 height='fit-content'
@@ -143,11 +153,10 @@ const MetricSelector = ({metricList, chartSchema}) => {
 const mapStateToProps = state => ({
     hasError: state.chart.hasError,
     metricList: state.chart.metricList,
-    isLoading: state.chart.isLoading
+    isLoading: state.chart.isLoading,
+    selectedMetricsMap : state.chart.selectedMetricsMap
 })
 
-const mapDispatchToProps = dispatch => ({
-
-})
+const mapDispatchToProps = dispatch => ({})
 
 export default connect(mapStateToProps, mapDispatchToProps)(MetricSelector);
