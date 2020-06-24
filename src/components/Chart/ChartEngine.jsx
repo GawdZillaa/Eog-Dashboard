@@ -1,6 +1,8 @@
 import React from 'react';
 import Chart from '../Chart/Chart'
 import MetricSelector from './MetricSelector'
+import { useSubscription } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 const MAX_SIZE = 4
 const MAX_ROW = 2
@@ -9,8 +11,36 @@ const charCount = 8
 const colors = ['pink', 'red', 'green', 'yellow']
 const colorsR = ['white', 'purple']
 const colorsC = ['violet', 'brown']
+
+const GQL_OBJ = gql`
+    subscription {
+        newMeasurement{
+            metric
+            at
+            value
+            unit
+          }
+    }
+`;
+
 const ChartEngine = ({chartsToDisplay, assignChartDetails, chartSchema}) => {
-    //Each Page can hold 4 charts
+    const { data, error, loading } = useSubscription(GQL_OBJ, {});
+    
+    // CLIENT_OBJ.query({
+    //     query: gql`
+    //     {
+    //         users {
+    //         id
+    //         name
+    //         email
+    //         }
+    //     }
+    //     `
+    // }).then(res => {
+
+    // })
+    
+            
     let pageCount = chartsToDisplay ?  Math.ceil(chartsToDisplay / MAX_PERPAGE) : 0;
     console.log("chartSchema", chartSchema)
     return(
