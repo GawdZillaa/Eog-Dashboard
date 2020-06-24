@@ -41,6 +41,7 @@ class Dashboard extends React.Component {
         // dispatch(actions.apiLoading());
 
         console.log(this.props)
+        this.props.apiLoading();
         queryObject.query({
             query: gql`
             {
@@ -54,9 +55,9 @@ class Dashboard extends React.Component {
             newMetricsResponse.data &&
             newMetricsResponse.getMetrics ? 
             {newMetrics : newMetricsResponse.getMetrics} : { hasError : true };
-
+            
             console.log("NICE", normalizedNewMetrics)
-            // dispatch(actions.setMetricList(getWeatherForLocation));
+            this.props.setMetricList(normalizedNewMetrics);
 
         })
     }
@@ -81,8 +82,7 @@ class Dashboard extends React.Component {
                     backgroundColor : 'red'
                 }}
             >
-                {/* {useSelector(this.getWeather).isLoading} */}
-                {this.props.metricList}
+               <h1> { this.props.isLoading.toString() } </h1>
             </div>
         )
     }
@@ -91,7 +91,8 @@ class Dashboard extends React.Component {
 
 const mapStateToProps = state => ({
     hasError: state.chart.hasError,
-    metricList: state.chart.metricList
+    metricList: state.chart.metricList,
+    isLoading: state.chart.isLoading
 })
 
 const mapDispatchToProps = dispatch => ({

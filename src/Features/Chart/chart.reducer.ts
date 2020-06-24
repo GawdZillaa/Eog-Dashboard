@@ -23,6 +23,7 @@ const slice = createSlice({
     setMetricList: (state, action: PayloadAction<MetricItems>)=>{
       const { newMetrics } = action.payload;
       state.metricList = newMetrics;
+      state.isLoading = false;
     },
     apiLoading: (state)=>{
       state.isLoading = true;
