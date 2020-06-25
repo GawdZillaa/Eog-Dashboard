@@ -12,12 +12,14 @@ export type MetricItems = {
 export type ChartSelection = {
   newSelectedMetricsMap: []
 }
+export type RemoveChart = {
+  newSelectedMetricMapObj: {}
+}
 
 const initialState = {
   metricList: [],
   isLoading: false,
   hasError: false,
-  chartMap: [],
   selectedMetricsMap: {}
 };
 
@@ -37,6 +39,10 @@ const slice = createSlice({
     newChartSelection: (state, action: PayloadAction<ChartSelection>) =>{
       let { newSelectedMetricsMap } = action.payload;
       state.selectedMetricsMap = newSelectedMetricsMap;
+    },
+    removeChart: (state, action: PayloadAction<RemoveChart>) => {
+      let { newSelectedMetricMapObj } = action.payload;
+      state.selectedMetricsMap = newSelectedMetricMapObj;
     }
 
   },
@@ -47,3 +53,4 @@ export const actions = slice.actions;
 export const setMetricList = slice.actions['setMetricList']
 export const apiLoading = slice.actions['apiLoading']
 export const newChartSelection = slice.actions['newChartSelection']
+export const removeChart = slice.actions['removeChart']

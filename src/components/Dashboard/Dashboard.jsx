@@ -8,10 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../../Features/Chart/chart.reducer';
 import { IState } from '../../store';
 import { connect } from 'react-redux';
-import { setMetricList, apiLoading, newChartSelection } from '../../Features/Chart/chart.reducer'
+import { setMetricList, apiLoading, newChartSelection, removeChart } from '../../Features/Chart/chart.reducer'
 import  ChartEngine  from '../Chart/ChartEngine'
 import { Button } from '@material-ui/core';
 import Header  from './Header'
+
 const httpLink = createHttpLink({
     uri: 'https://react.eogresources.com/graphql'
   });
@@ -20,7 +21,6 @@ const queryObject = new ApolloClient ({
     link : httpLink,
     cache
   })
-
 
 class Dashboard extends React.Component {
     // "flareTemp"
@@ -43,8 +43,6 @@ class Dashboard extends React.Component {
 
     componentDidMount(){
         this.getMetrics();
-
-            // 
     }
 
     getMetrics = () => {
@@ -69,9 +67,6 @@ class Dashboard extends React.Component {
     assignChartMetrics = async(changeRequest) => {
         console.log(changeRequest)
         let { action, chartIndex, newMetric, metricIndex } = changeRequest;
-        // console.log(moment().toDate())
-        // console.log(moment().subtract(30, 'minutes').toDate())
-        // console.log(moment().valueOf(), moment().subtract(30, 'minutes').valueOf())
         let oldSelectedMap = this.props.selectedMetricsMap;
         let oldChartSelectedList = this.props.selectedMetricsMap[chartIndex] ?
             [...this.props.selectedMetricsMap[chartIndex]] : [];
@@ -83,18 +78,10 @@ class Dashboard extends React.Component {
             switch(action){
                 case 'add':{
                     updatedChartSelectionList = [...oldChartSelectedList, newMetric]
-
                     break;
                 }
                 case 'remove':{
-                    console.log("REMOVING...", JSON.parse(JSON.stringify(oldChartSelectedList)))
-
-                    console.log("REMOVING...", JSON.parse(JSON.stringify(oldChartSelectedList)))
-                    console.log("REMOVING...", oldChartSelectedList[metricIndex])
-    
                     updatedChartSelectionList = oldChartSelectedList.length > 1 ? oldChartSelectedList.splice(metricIndex, 1) : []
-                    console.log("REMOVING...", JSON.parse(JSON.stringify(updatedChartSelectionList)))
-
                     break;
                 }
                 default:{
@@ -127,8 +114,22 @@ class Dashboard extends React.Component {
         })
     }
 
-    removeChartMetrich = () => {
+    removeChart = async(chartIndex) => {
+        console.log('called')
+        let newChartSchema = this.state.chartSchema.splice(chartIndex, 1);
+        let newSelectedMetricMap = delete this.props.selectedMetricsMap[chartIndex]
+        let newChartsEnabled = this.state.chartsEnabled - 1;
+        await this.props.removeChart({
+            newSelectedMetricMapObj : newSelectedMetricMap,
+        });
+        await this.setState({
+            chartsEnabled : newChartsEnabled,
+            chartSchema : newChartSchema
+        })
 
+        console.log('new metric map', this.props.selectedMetricsMap)
+        console.log('enabled charts', this.state.chartsEnabled)
+        console.log('enabled charts', this.state.chartSchema)
     }
 
 
@@ -138,7 +139,7 @@ class Dashboard extends React.Component {
                 style={{
                     height: '100vh',
                     width : '100%',
-                    backgroundColor : 'red',
+                    backgroundColor : 'white',
                     display:'flex',
                     flexDirection:'column'
                 }}
@@ -182,7 +183,8 @@ class Dashboard extends React.Component {
                             display: 'flex',
                             width:'85%',
                             height:'100%',
-                            overflow:'scroll'
+                            overflow:'scroll',
+                            overflowX:'hidden'
                         }}
                     >
 
@@ -199,6 +201,7 @@ class Dashboard extends React.Component {
                                 chartsToDisplay={this.state.chartsEnabled}
                                 assignChartMetrics={this.assignChartMetrics}
                                 chartSchema={this.state.chartSchema}
+                                removeChart={this.removeChart}
                             />
                         </div>
 
@@ -222,7 +225,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     setMetricList: e => dispatch(setMetricList(e)),
     apiLoading: e => dispatch(apiLoading(e)),
-    newChartSelection: e => dispatch(newChartSelection(e))
+    newChartSelection: e => dispatch(newChartSelection(e)),
+    removeChart: e => dispatch(removeChart(e))    
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

@@ -1,6 +1,7 @@
 import React from 'react';
 import Chart from '../Chart/Chart'
 import ChartActionBar from '../Chart/ChartActionBar'
+import NoChartPage from '../Chart/NoChartPage'
 import MetricSelector from './MetricSelector'
 import { useSubscription } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
@@ -40,7 +41,7 @@ const client = new ApolloClient ({
     cache
   })
 
-const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selectedMetricsMap}) => {
+const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selectedMetricsMap, removeChart}) => {
     const { data, error, loading } = useSubscription(GQL_OBJ, {});
     NORMALIZED_DATA_CACHE = [];
     
@@ -116,17 +117,15 @@ const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selected
     let pageCount = chartsToDisplay ?  Math.ceil(chartsToDisplay / MAX_PERPAGE) : 0;
     // console.log("chartSchema", chartSchema)
     return(
-        <div
-
-        >
+        <div>
             {
+                chartsToDisplay > 0 ?
                 [...Array(pageCount).keys()].map((page, pageId) => {
                     return ( //PAGE
                         <div
                             style={{
                                 height : '100vh',
                                 width : '100%',
-                                backgroundColor : colors[pageId],
                                 flexDirection: 'column',
                                 display:'flex'
                             }}
@@ -140,19 +139,15 @@ const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selected
                                                 display:'flex',
                                                 flexDirection:'row',
                                                 flex:'1',
-                                                backgroundColor: colorsR[rowId]
                                             }}
                                             key={rowId}
                                         >
                                             {
                                                 [...Array(MAX_ROW).keys()].map((chart, chartId, ) =>{
                                                     return(
-                                                        // console.log(pageId*4 + ((rowId*2) + chartId))
-                                                        // console.log(pageId, rowId, chartId, '->',((pageId * pageId) + rowId))
                                                         <div
                                                             style={{
                                                                 flex: 1,
-                                                                // backgroundColor: `#${Math.floor(Math.random()*16777215).toString(16)}`
                                                             }}
                                                             key={chartId}
                                                         >
@@ -174,7 +169,10 @@ const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selected
                                                                             backgroundColor:''
                                                                         }}
                                                                     >
-                                                                        <ChartActionBar>
+                                                                        <ChartActionBar
+                                                                            removeChart={removeChart}
+                                                                            chartIndex={(pageId*4 + ((rowId*2) + chartId))}
+                                                                        >
 
                                                                         </ChartActionBar>
                                                                     </div>
@@ -218,10 +216,7 @@ const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selected
                                                                             ></Chart> 
                                                                         </div>
                                                                     </div>
-
-                                                                </div>
-                                                                : null
-
+                                                                </div> : null
                                                             }
                                                         </div>
                                                     )
@@ -229,14 +224,18 @@ const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selected
                                                 })
                                             }
                                         </div>
-                                        // console.log('row', rowId, 'page', pageId)
                                     )
                                 })
                             }
                         </div>
-                        // console.log("page", pageId)
                     )
-                })
+                }) : null
+            } 
+            {
+                chartsToDisplay === 0 ?
+                    <NoChartPage>
+
+                    </NoChartPage>:null
             }
 
         </div>
