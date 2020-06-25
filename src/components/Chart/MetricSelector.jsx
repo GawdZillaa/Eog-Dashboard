@@ -9,12 +9,12 @@ import { connect } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../../Features/Chart/chart.reducer';
 import { Button } from '@material-ui/core';
+import { CenterFocusWeak, CancelPresentation, Highlight, ArrowBack } from '@material-ui/icons';
+import { green, red, yellow } from '@material-ui/core/colors';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
-const getSpacer = (flexAmount) => {
-    return <Box flex= {flexAmount} />
-}
-const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics, selectedMetricsMap}) => {
+const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics, selectedMetricsMap, mode, focusChart}) => {
 
     
         return (
@@ -31,12 +31,32 @@ const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics
                 flex='1'
                 flexDirection='row'
             >
+                {
+                    mode === 'focus' ?
+                    <Box
+                        display = 'flex'
+                        justifyContent= 'center'
+                        alignItems= 'center'
+                        bgcolor= ''
+                        flex = '1'
+                        flexDirection='row'
+                    >
+                        <Tooltip title="Return To Multi View">
+                            <ArrowBack 
+                                style={{ color: red[500] }} aria-label="Return To Multi View"
+                                onClick={() => focusChart(chartIndex, 'multi')}
+                            > 
+                            </ArrowBack>
+                        </Tooltip>
+                    </Box> : null
+                }
+
                 <Box
                     display = 'flex'
                     justifyContent= 'center'
                     alignItems= 'center'
                     bgcolor= ''
-                    flex = '5'
+                    flex = {mode === 'focus' ? '4' : '5'}
                     flexDirection='row'
 
                 >
@@ -52,27 +72,27 @@ const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics
                     >
                         <InputLabel id="demo-simple-select-helper-label"></InputLabel>
                         <Box
-                        boxShadow='3'
-                        borderRadius='50'
-                        overflow='hidden'
+                            boxShadow='3'
+                            borderRadius='50'
+                            overflow='hidden'
                         >
-                        <Select
-                            labelId="Select Metric"
-                            id="Select Metric"
-                            value={'Metric'}
-                            onChange={(event) => assignChartMetrics({
-                                chartIndex : chartIndex,
-                                newMetric : event.target.value,
-                                action : 'add'
-                            })}
-                            fullWidth={true}
-                            disabled={
-                                selectedMetricsMap[chartIndex] && 
-                                selectedMetricsMap[chartIndex].length === 2
-                            }
-                        >
+                            <Select
+                                labelId="Select Metric"
+                                id="Select Metric"
+                                value={'Metric'}
+                                onChange={(event) => assignChartMetrics({
+                                    chartIndex : chartIndex,
+                                    newMetric : event.target.value,
+                                    action : 'add'
+                                })}
+                                fullWidth={true}
+                                // disabled={
+                                //     selectedMetricsMap[chartIndex] && 
+                                //     selectedMetricsMap[chartIndex].length === 2
+                                // }
+                            >
                             <MenuItem value="">
-                            <em>None</em>
+                                <em>None</em>
                             </MenuItem>
                             {
                                 metricList &&

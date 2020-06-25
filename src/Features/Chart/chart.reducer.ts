@@ -16,11 +16,18 @@ export type RemoveChart = {
   newSelectedMetricMapObj: {}
 }
 
+export type FocusChart = {
+  newChartToFocus: number
+  isFocus: boolean
+}
+
 const initialState = {
   metricList: [],
   isLoading: false,
   hasError: false,
-  selectedMetricsMap: {}
+  selectedMetricsMap: {},
+  hasFocusChart: false,
+  focusChart: 0
 };
 
 const slice = createSlice({
@@ -37,12 +44,22 @@ const slice = createSlice({
     },
     chartApiErrorReceived: (state, action: PayloadAction<ApiErrorAction>) => state,
     newChartSelection: (state, action: PayloadAction<ChartSelection>) =>{
+      console.log('newChartSelection 1')
       let { newSelectedMetricsMap } = action.payload;
+      console.log('newChartSelection 2')
+
       state.selectedMetricsMap = newSelectedMetricsMap;
+      console.log('newChartSelection 3')
+
     },
     removeChart: (state, action: PayloadAction<RemoveChart>) => {
       let { newSelectedMetricMapObj } = action.payload;
       state.selectedMetricsMap = newSelectedMetricMapObj;
+    },
+    focusChart: (state, action: PayloadAction<FocusChart>) => {
+      let { newChartToFocus, isFocus } = action.payload;
+      state.focusChart =  isFocus ? newChartToFocus : 0;
+      state.hasFocusChart = isFocus;
     }
 
   },
@@ -54,3 +71,4 @@ export const setMetricList = slice.actions['setMetricList']
 export const apiLoading = slice.actions['apiLoading']
 export const newChartSelection = slice.actions['newChartSelection']
 export const removeChart = slice.actions['removeChart']
+export const focusChart = slice.actions['focusChart']

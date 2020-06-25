@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../../Features/Chart/chart.reducer';
 import { IState } from '../../store';
 import { connect } from 'react-redux';
-import { setMetricList, apiLoading, newChartSelection, removeChart } from '../../Features/Chart/chart.reducer'
+import { setMetricList, apiLoading, newChartSelection, removeChart, focusChart } from '../../Features/Chart/chart.reducer'
 import  ChartEngine  from '../Chart/ChartEngine'
 import { Button } from '@material-ui/core';
 import Header  from './Header'
@@ -82,7 +82,11 @@ class Dashboard extends React.Component {
                     break;
                 }
                 case 'remove':{
-                    updatedChartSelectionList = oldChartSelectedList.length > 1 ? oldChartSelectedList.splice(metricIndex, 1) : []
+
+                    updatedChartSelectionList = oldChartSelectedList.filter((metric) => {
+                        return metric != oldChartSelectedList[metricIndex]
+                    })
+
                     break;
                 }
                 default:{
@@ -99,7 +103,7 @@ class Dashboard extends React.Component {
             await this.props.newChartSelection({
                 newSelectedMetricsMap : updatesSelectedMap,
             });
-            console.log(this.props.selectedMetricsMap)
+            console.log('done', this.props.selectedMetricsMap)
         }
  
     }
@@ -143,6 +147,23 @@ class Dashboard extends React.Component {
         console.log('new metric map', this.props.selectedMetricsMap)
         console.log('enabled charts', this.state.chartsEnabled)
         console.log('enabled charts', this.state.chartSchema)
+    }
+
+    focusChart = async(chartId, action) => {
+        console.log("CALLED FOCUS")
+        if(action === 'focus'){
+            await this.props.focusChart({
+                newChartToFocus : chartId,
+                isFocus : true
+            });
+
+        }else{
+            await this.props.focusChart({
+                newChartToFocus : chartId,
+                isFocus : false
+            });
+        }
+
     }
 
 
@@ -217,6 +238,7 @@ class Dashboard extends React.Component {
                                 assignChartMetrics={this.assignChartMetrics}
                                 chartSchema={this.state.chartSchema}
                                 removeChart={this.removeChart}
+                                focusChart={this.focusChart}
                             />
                         </div>
 
@@ -234,14 +256,17 @@ const mapStateToProps = state => ({
     hasError: state.chart.hasError,
     metricList: state.chart.metricList,
     isLoading: state.chart.isLoading,
-    selectedMetricsMap : state.chart.selectedMetricsMap
+    selectedMetricsMap : state.chart.selectedMetricsMap,
+    hasFocusChart : state.chart.hasFocusChart,
+    _focusChart : state.chart.focusChart
 })
 
 const mapDispatchToProps = dispatch => ({
     setMetricList: e => dispatch(setMetricList(e)),
     apiLoading: e => dispatch(apiLoading(e)),
     newChartSelection: e => dispatch(newChartSelection(e)),
-    removeChart: e => dispatch(removeChart(e))    
+    removeChart: e => dispatch(removeChart(e)),
+    focusChart: e => dispatch(focusChart(e))    
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

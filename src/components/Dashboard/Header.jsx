@@ -14,7 +14,7 @@ const useStyles = makeStyles({
     flex:'1',
     display:'flex',
     flexDirection:'row',
-    backgroundColor:''
+    backgroundColor:'#d1d1d1'
   },
   headerCenter : {
     flex:'4',
@@ -64,11 +64,11 @@ const Header = ({addChart}) => {
           >
             <Button
                 style={{
-                    backgroundColor:'green'
+                    backgroundColor:'#25fa29'
                 }}
                 onClick={() => addChart()}
             >
-                Hi
+                Add Chart
             </Button>
           </div>
       </div>

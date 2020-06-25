@@ -11,6 +11,7 @@ import { ApolloClient } from 'apollo-boost';
 import { InMemoryCache } from 'apollo-boost';
 import { createHttpLink } from 'apollo-link-http';
 import LiveFeed from '../Chart/LiveFeed'
+import FocusView from '../Chart/FocusView'
 
 const MAX_ROW = 2
 const MAX_PERPAGE = 4
@@ -38,7 +39,16 @@ const client = new ApolloClient ({
     cache
   })
 
-const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selectedMetricsMap, removeChart}) => {
+const ChartEngine = ({
+    chartsToDisplay, 
+    assignChartMetrics, 
+    chartSchema, 
+    selectedMetricsMap, 
+    removeChart, 
+    focusChart,
+    hasFocusChart,
+    focusedChart
+}) => {
     const { data, error, loading } = useSubscription(GQL_OBJ, {});
     DATA_SELECTEDMETRICS = [];
     if(
@@ -179,6 +189,7 @@ const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selected
             >
 
                 {
+                    !hasFocusChart &&
                     chartsToDisplay > 0 ?
                     [...Array(pageCount).keys()].map((page, pageId) => {
                         return ( //PAGE
@@ -232,6 +243,7 @@ const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selected
                                                                             <ChartActionBar
                                                                                 removeChart={removeChart}
                                                                                 chartIndex={(pageId*4 + ((rowId*2) + chartId))}
+                                                                                focusChart={focusChart}
                                                                             />
                                                                         </div>
 
@@ -252,6 +264,8 @@ const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selected
                                                                                     chartSchema={chartSchema[(pageId*4 + ((rowId*2) + chartId))]}
                                                                                     assignChartMetrics={assignChartMetrics}
                                                                                     chartIndex={(pageId*4 + ((rowId*2) + chartId))}
+                                                                                    mode={'multi'}
+                                                                                    focusChart={focusChart}
                                                                                 />
 
                                                                             </div>
@@ -292,6 +306,68 @@ const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selected
                     chartsToDisplay === 0 ?
                         <NoChartPage/> : null
                 }
+                {
+                    hasFocusChart ? 
+                    // <FocusView
+                    //     DATA_CACHE={DATA_CACHE}
+                    //     chartIndex={focusedChart}
+                    //     chartData={
+                    //         selectedMetricsMap[focusedChart] &&
+                    //         selectedMetricsMap[focusedChart][0] &&
+                    //         DATA_CACHE[selectedMetricsMap[focusedChart][0]] ?
+                    //         DATA_CACHE[selectedMetricsMap[focusedChart][0]] :
+                    //         []
+                    //     }
+                    // >
+                    // </FocusView> : null
+
+                    <div
+                        style={{
+                            height:'89vh',
+                            width:'100%',
+                            backgroundColor: '',
+                            display:'flex',
+                            flexDirection:'column'
+                        }}
+                    >
+                            <div
+                                style={{
+                                    flex:'1.5'
+                                }}
+                            >
+                                <MetricSelector
+                                    chartSchema={chartSchema[focusedChart]}
+                                    assignChartMetrics={assignChartMetrics}
+                                    chartIndex={focusedChart}
+                                    mode={'focus'}
+                                    focusChart={focusChart}
+                                />
+
+                            </div>
+                            <div
+                                style={{
+                                    flex:'8.5'
+                                }}
+                            >
+                                <Chart
+                                    DATA_CACHE={DATA_CACHE}
+                                    chartIndex={focusedChart}
+                                    chartData={
+                                        selectedMetricsMap[focusedChart] &&
+                                        selectedMetricsMap[focusedChart][0] &&
+                                        DATA_CACHE[selectedMetricsMap[focusedChart][0]] ?
+                                        DATA_CACHE[selectedMetricsMap[focusedChart][0]] :
+                                        []
+                                    }
+                                >
+
+
+                                </Chart> 
+                            </div>
+
+                        </div> : null
+
+                }
 
             </div>
  
@@ -304,7 +380,9 @@ const mapStateToProps = state => ({
     hasError: state.chart.hasError,
     metricList: state.chart.metricList,
     isLoading: state.chart.isLoading,
-    selectedMetricsMap : state.chart.selectedMetricsMap
+    selectedMetricsMap : state.chart.selectedMetricsMap,
+    hasFocusChart : state.chart.hasFocusChart,
+    focusedChart : state.chart.focusChart
 })
 const mapDispatchToProps = dispatch => ({})
 

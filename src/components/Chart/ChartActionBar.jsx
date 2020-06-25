@@ -23,7 +23,7 @@ const useStyles = makeStyles({
     }
   });
 
-const ChartActionBar = ({ removeChart, chartIndex }) => {
+const ChartActionBar = ({ removeChart, chartIndex, focusChart }) => {
 
       const classes = useStyles();
 
@@ -48,15 +48,11 @@ const ChartActionBar = ({ removeChart, chartIndex }) => {
             className={classes.actionButtonContainer}
         >
             <Tooltip title="Enlarge Chart">
-                <CenterFocusWeak style={{ color: green[500] }} aria-label="Enlarge Chart"> </CenterFocusWeak>
-            </Tooltip>
-
-        </Box>
-        <Box
-            className={classes.actionButtonContainer}
-        >
-            <Tooltip title="Hilight Chart">
-                <Highlight style={{ color: yellow[500] }} aria-label="delete"> </Highlight>
+                <CenterFocusWeak 
+                    style={{ color: green[500] }} aria-label="Enlarge Chart"
+                    onClick={() => focusChart(chartIndex, 'focus')}
+                > 
+                </CenterFocusWeak>
             </Tooltip>
 
         </Box>
