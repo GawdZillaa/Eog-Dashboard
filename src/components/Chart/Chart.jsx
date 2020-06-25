@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
+import * as moment from 'moment/moment';
+
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,ResponsiveContainer
 } from 'recharts';
@@ -9,6 +11,7 @@ import {
 //         count
 //       }
 // `;
+
 const isOne =true;
 const isTwo = true;
 const data = [
@@ -34,11 +37,19 @@ const data = [
     name: 'Page G', uv: 3490, pv: 4300, amt: 2100,
   },
 ];
+// injValveOpen: Array(1383)
+// [0 … 99]
+// 0:
+// at: 1593047150817
+// metric: "injValveOpen"
+// unit: "%"
+// value: 10.05
+// __typename: "Measurement"d
 
+const Chart = ({ chartData, selectedMetrics, chartData_normalized, DATA_CACHE, chartIndex,selectedMetricsMap }) => {
 
-const Chart = ({ chartData, selectedMetrics, chartData_normalized }) => {
-  let newDataList = []
-  
+    console.log('new data', chartData)
+
   return (
 
     <ResponsiveContainer 
@@ -46,24 +57,30 @@ const Chart = ({ chartData, selectedMetrics, chartData_normalized }) => {
       <LineChart
         width={500}
         height={300}
-        data={data}
+        data={chartData}
         margin={{
           top: 5, right: 30, left: 20, bottom: 5,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis yAxisId="left" />
-        <YAxis yAxisId="right" orientation="right" />
+        {/* <CartesianGrid strokeDasharray="3 3" /> */}
+        {/* <XAxis dataKey="at" tickFormatter={(tick) => moment(tick * 1000).format('HH:mm')}/> */}
+        <XAxis dataKey="at" tickFormatter={(tick) => moment.unix(tick).format("HH:mm:ss.SSS")}/>
+        <YAxis yAxisId="right" orientation="right" dataKey="" />
         <Tooltip />
         <Legend />
-        <Line yAxisId="left" type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-        <Line yAxisId="right" type="monotone" dataKey="uv" stroke="#82ca9d" />
+        <Line yAxisId="right" type="monotone" dataKey="value" stroke="#82ca9d"dot={false} isAnimationActive ={false} />
       </LineChart>
     </ResponsiveContainer>
 
   );
 }
 
+const mapStateToProps = state => ({
+    hasError: state.chart.hasError,
+    metricList: state.chart.metricList,
+    isLoading: state.chart.isLoading,
+    selectedMetricsMap : state.chart.selectedMetricsMap
+})
+const mapDispatchToProps = dispatch => ({})
 
-export default Chart;
+export default connect(mapStateToProps, mapDispatchToProps)(Chart);

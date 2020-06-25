@@ -66,7 +66,7 @@ const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics
                             fullWidth={true}
                             disabled={
                                 selectedMetricsMap[chartIndex] && 
-                                selectedMetricsMap[chartIndex].length === 2
+                                selectedMetricsMap[chartIndex].length === 1
                             }
                         >
                             <MenuItem value="">
