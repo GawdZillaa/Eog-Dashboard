@@ -11,7 +11,11 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 const useStyles = makeStyles({
     mainContainer : {
-
+        height:'100%',
+        width:'100%',
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'center'
     },
 
   });
@@ -23,15 +27,9 @@ const ChartActionBar = ({ removeChart, chartIndex }) => {
   return (
       
     <div
-        style={{
-            height:'100%',
-            width:'100%',
-            display:'flex',
-            justifyContent:'center',
-            alignItems:'center'
-        }}
+        className={classes.mainContainer}
     >
-        <h1> No Enabled Charts!</h1>
+        <h1 > No Enabled Charts!</h1>
     </div>
 
   );

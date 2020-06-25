@@ -117,15 +117,27 @@ class Dashboard extends React.Component {
     removeChart = async(chartIndex) => {
         console.log('called')
         let newChartSchema = this.state.chartSchema.splice(chartIndex, 1);
-        let newSelectedMetricMap = delete this.props.selectedMetricsMap[chartIndex]
+        let newSelectedMetricMap = {};
+        // console.log(this.props.selectedMetricsMap)
+        for(const [key, value] of Object.entries(this.props.selectedMetricsMap)){
+            console.log(key)
+            if(key > chartIndex){
+                newSelectedMetricMap[key-1] = value;
+            }else if(key != chartIndex){
+                newSelectedMetricMap[key] = value;
+            }
+        }
+        console.log("newSelectedMetricMap", newSelectedMetricMap)
+
         let newChartsEnabled = this.state.chartsEnabled - 1;
-        await this.props.removeChart({
-            newSelectedMetricMapObj : newSelectedMetricMap,
-        });
         await this.setState({
             chartsEnabled : newChartsEnabled,
             chartSchema : newChartSchema
         })
+        await this.props.removeChart({
+            newSelectedMetricMapObj : newSelectedMetricMap,
+        });
+
 
         console.log('new metric map', this.props.selectedMetricsMap)
         console.log('enabled charts', this.state.chartsEnabled)
