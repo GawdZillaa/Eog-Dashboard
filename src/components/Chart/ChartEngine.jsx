@@ -126,45 +126,53 @@ const ChartEngine = ({chartsToDisplay, assignChartMetrics, chartSchema, selected
                 flexDirection:'row'
             }}
         >
-            <div
-                style={{
-                    display:'flex',
-                    height:'90vh',
-                    width: '15%',
-                    backgroundColor: '',
-                    position:'absolute',
-                     overflowX:'hidden',
-                     flexDirection: 'column',
-                     alignItems:'center'
-                }}
-            >
+            {
+                DATA_SELECTEDMETRICS &&
+                DATA_SELECTEDMETRICS.length > 0 ?
+                <div
+                    style={{
+                        display:'flex',
+                        height:'90vh',
+                        width: '15%',
+                        backgroundColor: '',
+                        position:'absolute',
+                        overflowX:'hidden',
+                        flexDirection: 'column',
+                        alignItems:'center'
+                    }}
+                >
 
-                {
-                    DATA_SELECTEDMETRICS &&
-                    DATA_SELECTEDMETRICS.map((metricKey, metricValue) => {
-                        return( 
-                            <LiveFeed
-                                title={metricKey}
-                                data={DATA_LIVEFEED && DATA_LIVEFEED[metricKey]}
-                            />
-                        )
-                    })
-                }
+                    {
+                        DATA_SELECTEDMETRICS &&
+                        DATA_SELECTEDMETRICS.map((metricKey, metricValue) => {
+                            return( 
+                                <LiveFeed
+                                    title={metricKey}
+                                    data={DATA_LIVEFEED && DATA_LIVEFEED[metricKey]}
+                                />
+                            )
+                        })
+                    }
 
-                 
-            </div>
-            <div
-                style={{
-                    display:'flex',
-                    height:'100%',
-                    width: '15.5%',
-                    backgroundColor: '',
-                }}
-            />
+                    
+                </div> : null
+            }
+            {
+                DATA_SELECTEDMETRICS &&
+                DATA_SELECTEDMETRICS.length > 0 ?
+                    <div
+                        style={{
+                            display:'flex',
+                            height:'100%',
+                            width: '15.5%',
+                            backgroundColor: '',
+                        }}
+                    /> : null
+            }
             <div
                 style={{
                     display: 'flex',
-                    width:'85%',
+                    width: DATA_SELECTEDMETRICS && DATA_SELECTEDMETRICS.length ? '85%' : '100%',
                     height:'100%',
                     flexDirection: 'column'
                 }}
