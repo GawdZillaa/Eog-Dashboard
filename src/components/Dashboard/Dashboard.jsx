@@ -12,6 +12,7 @@ import { setMetricList, apiLoading, newChartSelection, removeChart } from '../..
 import  ChartEngine  from '../Chart/ChartEngine'
 import { Button } from '@material-ui/core';
 import Header  from './Header'
+import LiveFeed from '../Chart/LiveFeed'
 
 const httpLink = createHttpLink({
     uri: 'https://react.eogresources.com/graphql'
@@ -179,7 +180,7 @@ class Dashboard extends React.Component {
                         width: '100%'
                     }}
                 >
-                    <div
+                    {/* <div
                         style={{
                             display:'flex',
                             height:'100%',
@@ -187,13 +188,15 @@ class Dashboard extends React.Component {
                             backgroundColor: 'pink'
                         }}
                     >
+                        <LiveFeed>
 
-                    </div>
+                        </LiveFeed>
+                    </div> */}
 
                     <div
                         style={{
                             display: 'flex',
-                            width:'85%',
+                            width:'100%',
                             height:'100%',
                             overflow:'scroll',
                             overflowX:'hidden'
