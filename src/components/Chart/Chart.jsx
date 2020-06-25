@@ -45,11 +45,51 @@ const data = [
 // unit: "%"
 // value: 10.05
 // __typename: "Measurement"d
+let newChartData = []
 
 const Chart = ({ chartData, selectedMetrics, chartData_normalized, DATA_CACHE, chartIndex,selectedMetricsMap }) => {
 
-    console.log('new data', chartData)
+    // console.log('new data', chartData)
+    if(
+        selectedMetricsMap && 
+        selectedMetricsMap[chartIndex] && 
+        selectedMetricsMap[chartIndex].length > 1
+    ){
+            let refrenceSelectedMetrics = []
+            let hasData = true;
+            for(let metricString of selectedMetricsMap[chartIndex]){
+                if(DATA_CACHE[metricString]){
+                    refrenceSelectedMetrics.push(metricString)
+                }else{
+                    hasData = false;
+                    break;
+                }
+            }
+        // console.log("Has 2")
+        if(hasData){
+            newChartData = []
+            let counter = 0
+            for(let dataObj of DATA_CACHE[refrenceSelectedMetrics[0]]){
+                let newMetricsData = {}
+                let segmentTime;
+                for(let _selectMetric of refrenceSelectedMetrics){
+                    let tempData = DATA_CACHE[_selectMetric][counter]
+                    newMetricsData[_selectMetric] = tempData && tempData.value
+                    newMetricsData[`unit${_selectMetric}`] = tempData && tempData.unit
+                    segmentTime = tempData && tempData.at
+                }
+                newMetricsData.at = segmentTime
+                newChartData.push(newMetricsData)
+    
+                counter++;
+            }
+            // console.log("brahhhh", newChartData)
+        }
 
+    }else{
+        newChartData = chartData;
+    }
+    // console.log('newChartData', newChartData)
   return (
 
     <ResponsiveContainer 
@@ -57,18 +97,28 @@ const Chart = ({ chartData, selectedMetrics, chartData_normalized, DATA_CACHE, c
       <LineChart
         width={500}
         height={300}
-        data={chartData}
+        data={newChartData}
         margin={{
           top: 5, right: 30, left: 20, bottom: 5,
         }}
       >
         {/* <CartesianGrid strokeDasharray="3 3" /> */}
         {/* <XAxis dataKey="at" tickFormatter={(tick) => moment(tick * 1000).format('HH:mm')}/> */}
-        <XAxis dataKey="at" tickFormatter={(tick) => moment.unix(tick).format("HH:mm:ss.SSS")}/>
+        <XAxis dataKey="at" tickFormatter={(tick) => moment.utc(tick).format('HH:mm:SS')}/>
         <YAxis yAxisId="right" orientation="right" dataKey="" />
         <Tooltip />
         <Legend />
-        <Line yAxisId="right" type="monotone" dataKey="value" stroke="#82ca9d"dot={false} isAnimationActive ={false} />
+        {
+            selectedMetricsMap &&
+            selectedMetricsMap[chartIndex]&&
+            selectedMetricsMap[chartIndex].map((metric, metircIndex) => {
+                return(
+                    <Line yAxisId="right" type="monotone" dataKey={selectedMetricsMap[chartIndex].length > 1 ?`${metric}` : 'value'} stroke="#82ca9d"dot={false} isAnimationActive ={false} />
+
+                )
+            })
+        }
+
       </LineChart>
     </ResponsiveContainer>
 

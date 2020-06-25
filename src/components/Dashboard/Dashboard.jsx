@@ -10,7 +10,8 @@ import { IState } from '../../store';
 import { connect } from 'react-redux';
 import { setMetricList, apiLoading, newChartSelection } from '../../Features/Chart/chart.reducer'
 import  ChartEngine  from '../Chart/ChartEngine'
-
+import { Button } from '@material-ui/core';
+import Header  from './Header'
 const httpLink = createHttpLink({
     uri: 'https://react.eogresources.com/graphql'
   });
@@ -73,18 +74,27 @@ class Dashboard extends React.Component {
         // console.log(moment().valueOf(), moment().subtract(30, 'minutes').valueOf())
         let oldSelectedMap = this.props.selectedMetricsMap;
         let oldChartSelectedList = this.props.selectedMetricsMap[chartIndex] ?
-            this.props.selectedMetricsMap[chartIndex] : [];
+            [...this.props.selectedMetricsMap[chartIndex]] : [];
 
         let updatedChartSelectionList = [];
         let updatesSelectedMap = [];
-            if(action === 'add'){
+
+        if(oldChartSelectedList){
             switch(action){
                 case 'add':{
                     updatedChartSelectionList = [...oldChartSelectedList, newMetric]
+
                     break;
                 }
                 case 'remove':{
-                    updatedChartSelectionList = oldChartSelectedList.splice(metricIndex, 1)
+                    console.log("REMOVING...", JSON.parse(JSON.stringify(oldChartSelectedList)))
+
+                    console.log("REMOVING...", JSON.parse(JSON.stringify(oldChartSelectedList)))
+                    console.log("REMOVING...", oldChartSelectedList[metricIndex])
+    
+                    updatedChartSelectionList = oldChartSelectedList.length > 1 ? oldChartSelectedList.splice(metricIndex, 1) : []
+                    console.log("REMOVING...", JSON.parse(JSON.stringify(updatedChartSelectionList)))
+
                     break;
                 }
                 default:{
@@ -92,18 +102,34 @@ class Dashboard extends React.Component {
                 }
             }
 
-            updatesSelectedMap = {...oldSelectedMap}
-            updatesSelectedMap[chartIndex] = updatedChartSelectionList;
-       }
-
-        console.log("Setting...", updatesSelectedMap)
-
-        await this.props.newChartSelection({
-            newSelectedMetricsMap : updatesSelectedMap,
-        });
-        console.log(this.props.selectedMetricsMap)
+                updatesSelectedMap = {...oldSelectedMap}
+                updatesSelectedMap[chartIndex] = updatedChartSelectionList;
+           
+    
+            console.log("Setting...", updatesSelectedMap)
+    
+            await this.props.newChartSelection({
+                newSelectedMetricsMap : updatesSelectedMap,
+            });
+            console.log(this.props.selectedMetricsMap)
+        }
+ 
     }
 
+    addChart = () => {
+        console.log('called')
+        let newChartSchema = [...this.state.chartSchema, {selectedMetrics:[]}];
+        let updatedChartsEnabled = this.state.chartsEnabled+1;
+
+        this.setState({
+            chartSchema : newChartSchema,
+            chartsEnabled : updatedChartsEnabled
+        })
+    }
+
+    removeChartMetrich = () => {
+
+    }
 
 
     render() {
@@ -118,20 +144,25 @@ class Dashboard extends React.Component {
                 }}
             >
                 <div
-                style={{
-                    display:'flex',
-                    flexDirection: 'row',
-                    height:'15vh',
-                    width: '100%',
-                    backgroundColor: 'white'
-                }}
-                ></div>
+                    style={{
+                        display:'flex',
+                        flexDirection: 'row',
+                        height:'10vh',
+                        width: '100%',
+                        backgroundColor: 'white'
+                    }}
+                    >
+                        <Header
+                            addChart={this.addChart}
+                        >
+                        </Header>         
+                </div>
 
                 <div
                     style={{
                         display:'flex',
                         flexDirection: 'row',
-                        height:'85vh',
+                        height:'90vh',
                         width: '100%'
                     }}
                 >

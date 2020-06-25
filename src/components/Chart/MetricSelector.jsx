@@ -8,6 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { connect } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../../Features/Chart/chart.reducer';
+import { Button } from '@material-ui/core';
 
 
 const getSpacer = (flexAmount) => {
@@ -39,9 +40,10 @@ const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics
                     flexDirection='row'
 
                 >
+
                     <Box flex= {2} />
                     <Box
-                    flex= '6'
+                        flex= '6'
                     >
                     <FormControl 
                         variant="outlined"
@@ -66,7 +68,7 @@ const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics
                             fullWidth={true}
                             disabled={
                                 selectedMetricsMap[chartIndex] && 
-                                selectedMetricsMap[chartIndex].length === 1
+                                selectedMetricsMap[chartIndex].length === 2
                             }
                         >
                             <MenuItem value="">
@@ -106,8 +108,6 @@ const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics
                     <Box
                         flex='8'
                         bgcolor=''
-                        justifyContent='center'
-                        alignItems='center'
                         flexDirection='row'
                         display='flex'
                     >
@@ -127,14 +127,29 @@ const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics
 
                             >
                                 <Box
-                                    flex='1'
+                                    flex='2'
                                     margin='7px'
                                     >
-                                    x
+                                    <Button
+                                        style={{
+                                            backgroundColor:'red',
+                                        }}
+                                        onClick={(event) => assignChartMetrics({
+                                            chartIndex : chartIndex,
+                                            newMetric : event.target.value,
+                                            action : 'remove',
+                                            metricIndex: index
+                                        })}
+                                    >
+                                        x
+                                    </Button>
                                 </Box>
                                 <Box
-                                    flex='1'
+                                    flex='8'
                                     margin='7px'
+                                    justifyContent='center'
+                                    alignItems='center'
+                                    display='flex'
                                 >
                                     { metricString }
                                 </Box>
