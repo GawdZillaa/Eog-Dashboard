@@ -12,6 +12,7 @@ import { InMemoryCache } from 'apollo-boost';
 import { createHttpLink } from 'apollo-link-http';
 import LiveFeed from '../Chart/LiveFeed';
 import { makeStyles } from '@material-ui/core/styles';
+import { EOG_URL } from '../../config/config';
 
 const MAX_ROW = 2;
 const MAX_PERPAGE = 4;
@@ -32,7 +33,7 @@ let DATA_SELECTEDMETRICS = [];
 
 const cache = new InMemoryCache();
 const httpLink = createHttpLink({
-  uri: 'https://react.eogresources.com/graphql',
+  uri: EOG_URL,
 });
 const client = new ApolloClient({
   link: httpLink,
@@ -168,7 +169,6 @@ const ChartEngine = ({
             DATA_SELECTEDMETRICS.map((metricKey, metricValue) => {
               return (
                 <LiveFeed
-                  // key={metricKey.id}
                   key={`${metricKey}_${metricValue}`}
                   title={metricKey}
                   data={DATA_LIVEFEED && DATA_LIVEFEED[metricKey]}
@@ -198,11 +198,9 @@ const ChartEngine = ({
         {!hasFocusChart && chartsToDisplay > 0
           ? [...Array(pageCount).keys()].map((page, pageId) => {
               return (
-                //PAGE
                 <div className={classes.pageContainer} key={`${page}__${pageId}`}>
                   {[...Array(MAX_ROW).keys()].map((row, rowId) => {
                     return (
-                      //ROW
                       <div className={classes.rowContainer} key={`${row}___${rowId}`}>
                         {[...Array(MAX_ROW).keys()].map((chart, chartId) => {
                           return (

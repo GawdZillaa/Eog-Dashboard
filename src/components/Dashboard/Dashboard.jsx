@@ -14,9 +14,9 @@ import {
 import ChartEngine from '../Chart/ChartEngine';
 import Header from './Header';
 import './Dashboard.styles.css';
-
+import { EOG_URL } from '../../config/config';
 const httpLink = createHttpLink({
-  uri: 'https://react.eogresources.com/graphql',
+  uri: EOG_URL,
 });
 const cache = new InMemoryCache();
 const queryObject = new ApolloClient({
