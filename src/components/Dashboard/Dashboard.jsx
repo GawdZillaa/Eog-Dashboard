@@ -1,18 +1,12 @@
 import React from 'react';
-import { useQuery } from 'urql';
 import { createHttpLink } from 'apollo-link-http';
-import { ApolloClient, from } from 'apollo-boost';
+import { ApolloClient } from 'apollo-boost';
 import gql from 'graphql-tag';
 import { InMemoryCache } from 'apollo-boost';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions } from '../../Features/Chart/chart.reducer';
-import { IState } from '../../store';
 import { connect } from 'react-redux';
 import { setMetricList, apiLoading, newChartSelection, removeChart, focusChart } from '../../Features/Chart/chart.reducer'
 import  ChartEngine  from '../Chart/ChartEngine'
-import { Button } from '@material-ui/core';
 import Header  from './Header'
-import LiveFeed from '../Chart/LiveFeed'
 
 const httpLink = createHttpLink({
     uri: 'https://react.eogresources.com/graphql'
@@ -24,12 +18,6 @@ const queryObject = new ApolloClient ({
   })
 
 class Dashboard extends React.Component {
-    // "flareTemp"
-    // 1: "injValveOpen"
-    // 2: "waterTemp"
-    // 3: "casingPressure"
-    // 4: "tubingPressure"
-    // 5: "oilTemp"
 
     constructor(){
         super();
@@ -61,7 +49,6 @@ class Dashboard extends React.Component {
                 newMetricsResponse.data.getMetrics ? 
                 {newMetrics : newMetricsResponse.data.getMetrics} : { hasError : true };
             this.props.setMetricList(normalizedNewMetrics);
-            console.log("AYEEEE", this.props.metricList)
         })
     }
 
@@ -84,7 +71,7 @@ class Dashboard extends React.Component {
                 case 'remove':{
 
                     updatedChartSelectionList = oldChartSelectedList.filter((metric) => {
-                        return metric != oldChartSelectedList[metricIndex]
+                        return metric !== oldChartSelectedList[metricIndex]
                     })
 
                     break;
@@ -97,19 +84,14 @@ class Dashboard extends React.Component {
                 updatesSelectedMap = {...oldSelectedMap}
                 updatesSelectedMap[chartIndex] = updatedChartSelectionList;
            
-    
-            console.log("Setting...", updatesSelectedMap)
-    
             await this.props.newChartSelection({
                 newSelectedMetricsMap : updatesSelectedMap,
             });
-            console.log('done', this.props.selectedMetricsMap)
         }
  
     }
 
     addChart = () => {
-        console.log('called')
         let newChartSchema = [...this.state.chartSchema, {selectedMetrics:[]}];
         let updatedChartsEnabled = this.state.chartsEnabled+1;
 
@@ -120,19 +102,16 @@ class Dashboard extends React.Component {
     }
 
     removeChart = async(chartIndex) => {
-        console.log('called')
         let newChartSchema = this.state.chartSchema.splice(chartIndex, 1);
         let newSelectedMetricMap = {};
-        // console.log(this.props.selectedMetricsMap)
         for(const [key, value] of Object.entries(this.props.selectedMetricsMap)){
             console.log(key)
             if(key > chartIndex){
                 newSelectedMetricMap[key-1] = value;
-            }else if(key != chartIndex){
+            }else if(key !== chartIndex){
                 newSelectedMetricMap[key] = value;
             }
         }
-        console.log("newSelectedMetricMap", newSelectedMetricMap)
 
         let newChartsEnabled = this.state.chartsEnabled - 1;
         await this.setState({
@@ -143,14 +122,9 @@ class Dashboard extends React.Component {
             newSelectedMetricMapObj : newSelectedMetricMap,
         });
 
-
-        console.log('new metric map', this.props.selectedMetricsMap)
-        console.log('enabled charts', this.state.chartsEnabled)
-        console.log('enabled charts', this.state.chartSchema)
     }
 
     focusChart = async(chartId, action) => {
-        console.log("CALLED FOCUS")
         if(action === 'focus'){
             await this.props.focusChart({
                 newChartToFocus : chartId,

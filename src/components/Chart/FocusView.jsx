@@ -1,13 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import * as moment from 'moment/moment';
-import { Button } from '@material-ui/core';
-import Box from "@material-ui/core/Box";
-import { Icon } from '@material-ui/core';
-import { CenterFocusWeak, CancelPresentation, Highlight } from '@material-ui/icons';
-import { green, red, yellow } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
 import Chart from '../Chart/Chart'
 
 const useStyles = makeStyles({
@@ -21,7 +14,7 @@ const useStyles = makeStyles({
 
   });
 
-const FocusView = ({ DATA_CACHE, chartIndex, chartData, selectedMetricsMap }) => {
+const FocusView = ({ DATA_CACHE, chartIndex, selectedMetricsMap }) => {
 
       const classes = useStyles();
 

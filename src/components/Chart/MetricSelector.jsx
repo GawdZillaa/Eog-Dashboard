@@ -6,15 +6,13 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { connect } from 'react-redux';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions } from '../../Features/Chart/chart.reducer';
 import { Button } from '@material-ui/core';
-import { CenterFocusWeak, CancelPresentation, Highlight, ArrowBack } from '@material-ui/icons';
-import { green, red, yellow } from '@material-ui/core/colors';
+import { ArrowBack } from '@material-ui/icons';
+import { red } from '@material-ui/core/colors';
 import Tooltip from '@material-ui/core/Tooltip';
 
 
-const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics, selectedMetricsMap, mode, focusChart}) => {
+const MetricSelector = ({metricList, chartIndex, assignChartMetrics, selectedMetricsMap, mode, focusChart}) => {
 
     
         return (
@@ -79,31 +77,24 @@ const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics
                             <Select
                                 labelId="Select Metric"
                                 id="Select Metric"
-                                value={'Metric'}
+                                value={'select'}
                                 onChange={(event) => assignChartMetrics({
                                     chartIndex : chartIndex,
                                     newMetric : event.target.value,
                                     action : 'add'
                                 })}
                                 fullWidth={true}
-                                // disabled={
-                                //     selectedMetricsMap[chartIndex] && 
-                                //     selectedMetricsMap[chartIndex].length === 2
-                                // }
+
                             >
-                            <MenuItem value="">
-                                <em>None</em>
+                            <MenuItem value="select">
+                                <em>select</em>
                             </MenuItem>
                             {
                                 metricList &&
                                 metricList.map((metricName, id) =>{
-                                
-                                {
                                     return !selectedMetricsMap[chartIndex] ||
                                         !selectedMetricsMap[chartIndex].includes(metricName) ?
-                                    <MenuItem key={id} name={id} value={metricName}>{ metricName }</MenuItem> : null 
-                                }
-                                
+                                    <MenuItem key={`${id}`} name={id} value={metricName}>{ metricName }</MenuItem> : null 
                                 })
                             }
                             </Select>
@@ -142,7 +133,7 @@ const MetricSelector = ({metricList, chartSchema, chartIndex, assignChartMetrics
                                 boxShadow='2'
                                 display='flex'
                                 flexDirection='row'
-                                key={index}
+                                key={`${index}`}
                                 marginRight='5px'
 
                             >

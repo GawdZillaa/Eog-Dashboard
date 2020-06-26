@@ -11,7 +11,6 @@ import { ApolloClient } from 'apollo-boost';
 import { InMemoryCache } from 'apollo-boost';
 import { createHttpLink } from 'apollo-link-http';
 import LiveFeed from '../Chart/LiveFeed'
-import FocusView from '../Chart/FocusView'
 
 const MAX_ROW = 2
 const MAX_PERPAGE = 4
@@ -38,7 +37,9 @@ const client = new ApolloClient ({
     link : httpLink,
     cache
   })
-
+const generateKey = (pre) => {
+    return `${ pre }_${ new Date().getTime() }`;
+}
 const ChartEngine = ({
     chartsToDisplay, 
     assignChartMetrics, 
@@ -49,12 +50,13 @@ const ChartEngine = ({
     hasFocusChart,
     focusedChart
 }) => {
-    const { data, error, loading } = useSubscription(GQL_OBJ, {});
+    const { data, error } = useSubscription(GQL_OBJ, {});
     DATA_SELECTEDMETRICS = [];
     if(
         data && 
         data.newMeasurement && 
-        data.newMeasurement.metric
+        data.newMeasurement.metric &&
+        !error
     ){
         DATA_LIVEFEED[data.newMeasurement.metric] = data.newMeasurement.value;
 
@@ -76,15 +78,12 @@ const ChartEngine = ({
                 DATA_SELECTEDMETRICS.push(metricInFocus)
             }
             if(!DATA_CACHE[metricInFocus]){
-                console.log("No Data!", metricInFocus)
                 if(!DATA_CACHE[0]){
-                    console.log("No Refrence!")
 
                     let afterDate = moment().utc().subtract(30, 'minutes').format("x")
                     let queryString = `[{metricName: "${metricInFocus}", after: ${afterDate}},`
                     for(let [e, metricString] in DATA_CACHE){
-                        console.log("in", e, metricString)
-                        if(metricString != metricInFocus){
+                        if(metricString !== metricInFocus){
                             queryString +=  `{metricName: "${metricString}", after: ${afterDate}}`
                         }
 
@@ -128,7 +127,6 @@ const ChartEngine = ({
     
 
     let pageCount = chartsToDisplay ?  Math.ceil(chartsToDisplay / MAX_PERPAGE) : 0;
-    // console.log("chartSchema", chartSchema)
     return(
         <div
             style={{
@@ -157,6 +155,8 @@ const ChartEngine = ({
                         DATA_SELECTEDMETRICS.map((metricKey, metricValue) => {
                             return( 
                                 <LiveFeed
+                                    // key={metricKey.id}
+                                    key={`${metricKey}_${metricValue}`}
                                     title={metricKey}
                                     data={DATA_LIVEFEED && DATA_LIVEFEED[metricKey]}
                                 />
@@ -200,7 +200,7 @@ const ChartEngine = ({
                                     flexDirection: 'column',
                                     display:'flex'
                                 }}
-                                key={pageId}
+                                key={`${page}__${pageId}`}
                             >
                                 {
                                     [...Array(MAX_ROW).keys()].map((row, rowId) => {
@@ -211,17 +211,17 @@ const ChartEngine = ({
                                                     flexDirection:'row',
                                                     flex:'1',
                                                 }}
-                                                key={rowId}
-                                            >
+                                                key={`${row}___${rowId}`}
+                                                >
                                                 {
-                                                    [...Array(MAX_ROW).keys()].map((chart, chartId, ) =>{
+                                                    [...Array(MAX_ROW).keys()].map((chart, chartId) =>{
                                                         return(
                                                             <div
                                                                 style={{
                                                                     flex: 1,
                                                                 }}
-                                                                key={chartId}
-                                                            >
+                                                                key={`${chart}_____${chartId}`}
+                                                                >
                                                                 {
                                                                     chartsToDisplay -1 >= (pageId*4 + ((rowId*2) + chartId)) ? 
                                                                     <div
@@ -308,19 +308,6 @@ const ChartEngine = ({
                 }
                 {
                     hasFocusChart ? 
-                    // <FocusView
-                    //     DATA_CACHE={DATA_CACHE}
-                    //     chartIndex={focusedChart}
-                    //     chartData={
-                    //         selectedMetricsMap[focusedChart] &&
-                    //         selectedMetricsMap[focusedChart][0] &&
-                    //         DATA_CACHE[selectedMetricsMap[focusedChart][0]] ?
-                    //         DATA_CACHE[selectedMetricsMap[focusedChart][0]] :
-                    //         []
-                    //     }
-                    // >
-                    // </FocusView> : null
-
                     <div
                         style={{
                             height:'89vh',
@@ -366,7 +353,6 @@ const ChartEngine = ({
                             </div>
 
                         </div> : null
-
                 }
 
             </div>

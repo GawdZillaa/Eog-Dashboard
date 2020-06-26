@@ -1,10 +1,8 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import { makeStyles } from '@material-ui/core/styles';
 import Weather from '../../Features/Weather/Weather';
-import { Button } from '@material-ui/core';
+import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles({
   grow: {
@@ -36,7 +34,6 @@ const useStyles = makeStyles({
 const Header = ({addChart}) => {
     const classes = useStyles();
 
-  const name = "detrich's";
   return (
       <div
         className={classes.headerLeft}
@@ -56,20 +53,26 @@ const Header = ({addChart}) => {
             className={classes.headerCenter}
           >
                 <Typography variant="h6" color="inherit" >
-                    {name} EOG React Visualization Assessment
+                    Data Dash Project
                 </Typography>
           </div>
           <div
             className={classes.headerRight}
           >
-            <Button
-                style={{
-                    backgroundColor:'#25fa29'
-                }}
+            <Box
+                bgcolor='white'
                 onClick={() => addChart()}
+                boxShadow={2}
+                height='75px'
+                width='100px'
+                justifyContent='center'
+                alignItems='center'
+                display='flex'
+                borderRadius='15px'
+                textAlign='center'
             >
-                Add Chart
-            </Button>
+                Add Another Chart
+            </Box>
           </div>
       </div>
 
