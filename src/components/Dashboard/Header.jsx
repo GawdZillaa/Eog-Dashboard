@@ -8,8 +8,10 @@ const useStyles = makeStyles({
   grow: {
     flexGrow: 1,
   },
+  headerMain: {},
   headerLeft: {
-    flex: '1',
+    height: '100%',
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
     backgroundColor: '#00b7c4',
@@ -29,7 +31,7 @@ const useStyles = makeStyles({
   addChartButton: {},
   addAnotherChartButton: {
     backgroundColor: 'white',
-    height: '75px',
+    height: '75%',
     width: '100px',
     justifyContent: 'center',
     alignItems: 'center',

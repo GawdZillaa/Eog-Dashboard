@@ -15,6 +15,7 @@ import ChartEngine from '../Chart/ChartEngine';
 import Header from './Header';
 import './Dashboard.styles.css';
 import { EOG_URL } from '../../config/config';
+
 const httpLink = createHttpLink({
   uri: EOG_URL,
 });
