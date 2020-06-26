@@ -125,20 +125,20 @@ const ChartEngine = ({
           client
             .query({
               query: gql`
-                        {
-                            getMultipleMeasurements (input :
-                            ${queryString}
-                            ){ 
+                    {
+                        getMultipleMeasurements (input :
+                        ${queryString}
+                        ){ 
+                            metric
+                            measurements{
                                 metric
-                                measurements{
-                                    metric
-                                    at
-                                    value
-                                    unit
-                                }
+                                at
+                                value
+                                unit
                             }
                         }
-                    `,
+                    }
+                `,
             })
             .then(metricDataResponse => {
               let { getMultipleMeasurements } = metricDataResponse.data;
