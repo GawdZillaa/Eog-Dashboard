@@ -5,7 +5,14 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, La
 
 let newChartData = [];
 let metricUnitMap = {};
-
+let randomColors = [
+  '#' + Math.floor(Math.random() * 16777215).toString(16),
+  '#' + Math.floor(Math.random() * 16777215).toString(16),
+  '#' + Math.floor(Math.random() * 16777215).toString(16),
+  '#' + Math.floor(Math.random() * 16777215).toString(16),
+  '#' + Math.floor(Math.random() * 16777215).toString(16),
+  '#' + Math.floor(Math.random() * 16777215).toString(16),
+];
 const Chart = ({ chartData, DATA_CACHE, chartIndex, selectedMetricsMap }) => {
   if (selectedMetricsMap && selectedMetricsMap[chartIndex]) {
     let refrenceSelectedMetrics = [];
@@ -71,7 +78,7 @@ const Chart = ({ chartData, DATA_CACHE, chartIndex, selectedMetricsMap }) => {
                 yAxisId={metircIndex}
                 type="monotone"
                 dataKey={`${metric}`}
-                stroke="#82ca9d"
+                stroke={randomColors[metircIndex]}
                 dot={false}
                 isAnimationActive={false}
                 key={`${metric}___line`}
