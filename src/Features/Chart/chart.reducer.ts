@@ -44,13 +44,8 @@ const slice = createSlice({
     },
     chartApiErrorReceived: (state, action: PayloadAction<ApiErrorAction>) => state,
     newChartSelection: (state, action: PayloadAction<ChartSelection>) =>{
-      console.log('newChartSelection 1')
       let { newSelectedMetricsMap } = action.payload;
-      console.log('newChartSelection 2')
-
       state.selectedMetricsMap = newSelectedMetricsMap;
-      console.log('newChartSelection 3')
-
     },
     removeChart: (state, action: PayloadAction<RemoveChart>) => {
       let { newSelectedMetricMapObj } = action.payload;

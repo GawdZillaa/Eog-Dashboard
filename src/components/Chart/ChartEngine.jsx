@@ -37,9 +37,7 @@ const client = new ApolloClient ({
     link : httpLink,
     cache
   })
-const generateKey = (pre) => {
-    return `${ pre }_${ new Date().getTime() }`;
-}
+
 const ChartEngine = ({
     chartsToDisplay, 
     assignChartMetrics, 
@@ -109,15 +107,8 @@ const ChartEngine = ({
                         let { getMultipleMeasurements } = metricDataResponse.data;
 
                         for(let dataObj of getMultipleMeasurements){
-                            console.log(dataObj)
                             let { metric, measurements } = dataObj;
-                                console.log(metric, measurements[0])
                                 DATA_CACHE[metric] = measurements;
-                        }
-                        //Now normalize
-
-                        for(let metric in DATA_CACHE){
-                            console.log('-', metric)
                         }
                     })
                 }

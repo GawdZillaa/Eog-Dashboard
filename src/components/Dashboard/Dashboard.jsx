@@ -53,7 +53,6 @@ class Dashboard extends React.Component {
     }
 
     assignChartMetrics = async(changeRequest) => {
-        console.log(changeRequest)
         let { action, chartIndex, newMetric, metricIndex } = changeRequest;
         let oldSelectedMap = this.props.selectedMetricsMap;
         let oldChartSelectedList = this.props.selectedMetricsMap[chartIndex] ?
@@ -105,7 +104,6 @@ class Dashboard extends React.Component {
         let newChartSchema = this.state.chartSchema.splice(chartIndex, 1);
         let newSelectedMetricMap = {};
         for(const [key, value] of Object.entries(this.props.selectedMetricsMap)){
-            console.log(key)
             if(key > chartIndex){
                 newSelectedMetricMap[key-1] = value;
             }else if(key !== chartIndex){
